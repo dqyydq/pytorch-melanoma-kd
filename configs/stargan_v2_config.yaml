@@ -1,0 +1,48 @@
+# configs/stargan_v2_config.yaml
+
+# 1. 模型超参数 (Model Hyperparameters)
+model_params:
+  img_size: 256        # 图像分辨率，应与你预处理步骤中的 TARGET_SIZE 一致
+  num_domains: 8       # 域的数量，根据 ISIC 2019 (排除 UNK) 应为 8
+  latent_dim: 16       # 潜在向量 z 的维度 (StarGAN v2 默认值)
+  hidden_dim: 512      # 映射网络和风格编码器中隐藏层的维度 (StarGAN v2 默认值)
+  style_dim: 64        # 风格编码 s 的维度 (StarGAN v2 默认值)
+  w_hpf: 0             # 高通滤波器权重，设为 0 表示不使用 (适用于非人脸任务)
+  max_conv_dim: 512    # 卷积层中的最大通道数 (StarGAN v2 默认值)
+  lambda_reg: 1        # R1 正则化损失的权重 (StarGAN v2 默认值)
+  lambda_cyc: 1        # 循环一致性损失的权重 (StarGAN v2 默认值)
+  lambda_sty: 1        # 风格重建损失的权重 (StarGAN v2 默认值)
+  lambda_ds: 1         # 多样性敏感损失的权重 (StarGAN v2 默认值，可以尝试 1 或 2)
+
+# 2. 训练参数 (Training Parameters)
+train_params:
+  total_iters: 100000  # 总训练迭代次数 (可以先设小一点测试，如 10000，再增加)
+  resume_iter: 95000       # 从哪个迭代次数恢复训练 (设为 0 表示新训练)
+  batch_size: 2        # 训练批次大小 (重要! 根据你的 16GB 显存调整，可以从 4 或 8 开始尝试，如果 OOM 就减小)
+  val_batch_size: 8    # 验证集批次大小 (当前训练脚本未使用，但可以保留)
+  lr: 0.0001           # G, E, D 的学习率 (StarGAN v2 默认值)
+  f_lr: 0.000001         # Mapping Network (F) 的学习率 (StarGAN v2 默认值，通常较低)
+  beta1: 0.0           # Adam 优化器的 beta1 (StarGAN v2 默认值)
+  beta2: 0.99          # Adam 优化器的 beta2 (StarGAN v2 默认值)
+  weight_decay: 0.0001 # 优化器的权重衰减 (StarGAN v2 默认值)
+  ds_iter: 100000      # 在多少次迭代内将 lambda_ds 衰减到 0 (通常等于 total_iters)
+  seed: 42             # 随机种子，用于可复现性
+  num_workers: 0       # 数据加载使用的 CPU worker 数量 (根据你的 CPU 核心数调整，例如 4 或 8)
+  print_every: 100     # 每隔多少次迭代打印一次日志
+  sample_every: 500   # 每隔多少次迭代生成一次样本图像
+  save_every: 5000    # 每隔多少次迭代保存一次检查点
+  # --- !! 修改下面的路径 !! ---
+  checkpoint_dir: 'D:/python_code/pytorch_melanama_kd/training/expr/stargan_v2_isic/checkpoints' # 保存检查点的目录路径 (可以是相对路径或绝对路径)
+  # checkpoint_dir: './expr/stargan_v2_isic/checkpoints'
+  sample_dir: './expr/stargan_v2_isic/samples'         # 保存样本图像的目录路径
+
+# 3. 数据参数 (Data Parameters)
+data_params:
+  train_fold_num: 0    # 使用哪个 fold 的 CSV 进行训练 (例如 train_fold_0.csv)
+  # --- !! 修改下面的路径 !! ---
+  # 指向包含 train_fold_X.csv, val_fold_X.csv 文件的目录
+  fold_csv_dir: 'D:/python_code/pytorch_melanama_kd/data/ISIC2019/folds_pytorch'
+  # 指向包含实际图像文件的根目录 (修复后的图像)
+  img_root_dir: 'D:/python_code/pytorch_melanama_kd/data/ISIC2019/inpainted_pytorch/train'
+  # CSV 文件中整数标签列的名称 (应与 2_create_splits.py 脚本一致)
+  label_column: 'integer_label'

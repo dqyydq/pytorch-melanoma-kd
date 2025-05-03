@@ -1,0 +1,44 @@
+# configs/generation_config.yaml
+
+# --- !! 请根据您的设置修改以下参数 !! ---
+
+generation_params:
+  # 1. 要加载的 StarGAN v2 检查点
+  resume_iter: 10000         # 指定要加载的已训练模型的迭代次数。
+                               # 通常是您训练结束时的迭代次数，或者您认为效果最好的某个检查点的迭代次数。
+                               # (需要与 train_params.checkpoint_dir 中保存的文件名匹配, e.g., 100000.ckpt)
+
+  # 2. 源域设置 (用于提供生成起点的图像)
+  source_domain_label: 1     # 源域的整数标签。根据我们之前的约定，'NV' (痣) 通常数量最多，其标签是 1。
+                               # 请确认 1 确实是您数据中数量最多的类别标签。
+  source_fold_num: 0         # 从哪个 K-Fold CSV 文件 (e.g., train_fold_0.csv) 中选择源图像。
+                               # 通常使用 fold 0 即可。
+  num_source_images: -1      # 要使用多少张源图像来生成。
+                               # 设置为 -1 表示使用选定 fold 中所有属于 source_domain_label 的图像。
+                               # 如果您只想快速测试或生成少量数据，可以设置为一个较小的正整数，例如 100 或 1000。
+
+  # 3. 目标域设置 (要为其生成合成图像的类别)
+  target_domain_labels:      # 要为其生成合成图像的目标少数类的整数标签列表。
+    - 0                      # 例如 'MEL'
+    - 2                      # 例如 'BCC'
+    - 3                      # 例如 'AK'
+    - 4                      # 例如 'BKL'
+    - 5                      # 例如 'DF'
+    - 6                      # 例如 'VASC'
+    - 7                      # 例如 'SCC'
+                             # !! 请根据您实际需要平衡的类别修改这个列表 !!
+                             # 如果省略此参数或设为 null/None，脚本会尝试为除源域外的所有其他域生成。
+
+  # 4. 生成过程控制
+  num_styles_per_source: 1   # 对于每一张源图像，使用多少个不同的随机潜在编码 z 来生成不同风格的图像。
+                               # - 设置为 1：每个源图像只生成一个对应目标类的合成图像。总生成数量 = num_source_images * len(target_domain_labels)。
+                               # - 设置为 > 1 (例如 2 或 3)：每个源图像会生成多个风格不同的对应目标类的合成图像，可以增加多样性，但总生成数量会成倍增加。
+  batch_size: 8             # 生成过程中的批处理大小。可以根据您的 GPU 显存适当调大（例如 8, 16, 32），通常比训练时的 batch size 可以更大。
+  apply_inpainting: True     # 是否对生成的合成图像应用 removeHair_inpainting 修复？
+                               # 根据原始 CycleGAN 流程中的 `3_stratify...` 脚本，原始做法是应用了修复。推荐设置为 True，
+                               # 但需要确保 removeHair_inpainting 函数可用且能被正确导入。
+
+  # 5. 输出设置
+  # --- !! 修改下面的路径 !! ---
+  output_dir: './data/ISIC2019/synthetic_stargan_pytorch/train' # 保存生成的合成图像的目录路径。
+                                                                             # 脚本会尝试创建此目录。请确保路径正确。
