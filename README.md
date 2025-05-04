@@ -3,7 +3,7 @@
 
 1.  **克隆仓库:**
     ```bash
-    git clone https://github.com/YourUsername/pytorch-melanoma-kd.git # 替换为您的仓库 URL
+    git clone https://github.com/dqyydq/pytorch-melanoma-kd.git # 替换为您的仓库 URL
     cd pytorch-melanoma-kd
     ```
 2.  **创建 Python 环境 (推荐):**
@@ -19,8 +19,7 @@
     # 如果需要进行 LPIPS 评估，安装 LPIPS 库
     # pip install lpips
     ```
-    *(请在 `requirements.txt` 文件中列出所有必要的库及其版本)*
-
+   
 ## 数据准备
 
 1.  **下载 ISIC 2019 数据:** 获取 ISIC 2019 训练数据集（图像和 `ISIC_2019_Training_GroundTruth.csv` 元数据）。将它们按脚本期望的结构放置（例如放在 `data/ISIC2019/` 下）。
@@ -133,7 +132,3 @@
 *   StarGAN v2 的实现基于官方仓库: [https://github.com/clovaai/stargan-v2](https://github.com/clovaai/stargan-v2)
 *   数据集来源: ISIC Archive (本项目使用 ISIC 2019 挑战赛数据集)。如果需要，请按 ISIC 要求进行引用。
 *   提及使用的其他重要库或资源。
-
-## 许可证
-
-*(可选)* 本项目采用 MIT 许可证授权 - 详情参见 [LICENSE](LICENSE) 文件。(您需要创建一个包含 MIT 许可证文本的 LICENSE 文件)。
